@@ -32,7 +32,7 @@ def upload(bucket, remove=False, domainList=False):
 
 	if domainList is False: print(Fore.YELLOW+"[!] Trying Upload: "+file+Style.RESET_ALL)
 	up = cmd("aws s3 cp %s s3://%s" % (file, bucket))
-	if 'An error occurred (AccessDenied) when calling the PutObject operation: Access Denied' in up:
+	if 'An error occurred (AccessDenied) when calling the PutObject operation: Access Denied' in up or '(AllAccessDisabled)' in up:
 		print(Fore.RED+'\b\t[Upload Failed]'+Style.RESET_ALL) if domainList else print(Fore.RED+'[X] Access Denied for Uploading in bucket'+Style.RESET_ALL)
 		if remove and domainList: 
 			print(Fore.YELLOW+'\b\t[Remove DNF]'+Style.RESET_ALL)
@@ -60,7 +60,7 @@ def upload(bucket, remove=False, domainList=False):
 def acl(bucket, domainList=False):
 	if domainList is False: print(Fore.YELLOW+"[!] Checking "+bucket+" bucket ACL: "+Style.RESET_ALL)
 	acl = cmd("aws s3api get-bucket-acl --bucket %s" %(bucket))
-	if 'An error occurred (AccessDenied) when calling the GetBucketAcl operation: Access Denied' in acl:
+	if 'An error occurred (AccessDenied) when calling the GetBucketAcl operation: Access Denied' in acl or '(AllAccessDisabled)' in acl:
 		print(Fore.RED+'\b\t[ACL Disable]'+Style.RESET_ALL) if domainList else print(Fore.RED+'[X] Access Denied for fetching bucket ACL'+Style.RESET_ALL)
 	elif '(NoSuchBucket)' in acl:
 		print(Fore.MAGENTA+'\b\t[NSB:ACL Disable]'+Style.RESET_ALL) if domainList else print(Fore.MAGENTA+'[X] No Such Bucket for fetching bucket ACL'+Style.RESET_ALL)
@@ -72,7 +72,7 @@ def acl(bucket, domainList=False):
 def policy(bucket, domainList=False):
 	if domainList is False: print(Fore.YELLOW+"[!] Checking "+bucket+" bucket policy: "+Style.RESET_ALL)
 	policy = cmd("aws s3api get-bucket-policy --bucket %s" %(bucket))
-	if 'An error occurred (AccessDenied) when calling the GetBucketPolicy operation: Access Denied' in policy:
+	if 'An error occurred (AccessDenied) when calling the GetBucketPolicy operation: Access Denied' in policy or '(AllAccessDisabled)' in policy:
 		print(Fore.RED+'\b\t[Policy Disable]'+Style.RESET_ALL) if domainList else print(Fore.RED+'[X] Access Denied for fetching bucket policy'+Style.RESET_ALL)
 	elif '(NoSuchBucket)' in policy:
 		print(Fore.MAGENTA+'\b\t[NSB:Policy Disable]'+Style.RESET_ALL) if domainList else print(Fore.MAGENTA+'[X] No Such Bucket for fetching bucket policy'+Style.RESET_ALL)
@@ -84,7 +84,7 @@ def policy(bucket, domainList=False):
 def cors(bucket, domainList=False):
 	if domainList is False: print(Fore.YELLOW+"[!] Checking "+bucket+" bucket CORS config: "+Style.RESET_ALL)
 	cors = cmd("aws s3api get-bucket-cors --bucket %s" %(bucket))
-	if 'An error occurred (AccessDenied) when calling the GetBucketCors operation: Access Denied' in cors:
+	if 'An error occurred (AccessDenied) when calling the GetBucketCors operation: Access Denied' in cors or '(AllAccessDisabled)' in cors:
 		print(Fore.RED+'\b\t[Cors Disable]'+Style.RESET_ALL) if domainList else print(Fore.RED+'[X] Access Denied for fetching cors config'+Style.RESET_ALL)
 	elif '(NoSuchBucket)' in cors:
 		print(Fore.MAGENTA+'\b\t[NSB:Cors Disable]'+Style.RESET_ALL) if domainList else print(Fore.MAGENTA+'[X] No Such Bucket for fetching cors config'+Style.RESET_ALL)
@@ -96,7 +96,7 @@ def cors(bucket, domainList=False):
 def replication(bucket, domainList=False):
 	if domainList is False: print(Fore.YELLOW+"[!] Checking "+bucket+" bucket replication config: "+Style.RESET_ALL)
 	replication = cmd("aws s3api get-bucket-replication --bucket %s" %(bucket))
-	if 'An error occurred (AccessDenied) when calling the GetBucketReplication operation: Access Denied' in replication:
+	if 'An error occurred (AccessDenied) when calling the GetBucketReplication operation: Access Denied' in replication or '(AllAccessDisabled)' in replication:
 		print(Fore.RED+'\b\t[Replication Disable]'+Style.RESET_ALL) if domainList else print(Fore.RED+'[X] Access Denied for fetching replication config'+Style.RESET_ALL)
 	elif '(NoSuchBucket)' in replication:
 		print(Fore.MAGENTA+'\b\t[NSB:Replication Disable]'+Style.RESET_ALL) if domainList else print(Fore.MAGENTA+'[X] No Such Bucket for fetching replication config'+Style.RESET_ALL)
@@ -108,7 +108,7 @@ def replication(bucket, domainList=False):
 def website(bucket, domainList=False):
 	if domainList is False: print(Fore.YELLOW+"[!] Checking "+bucket+" bucket website config: "+Style.RESET_ALL)
 	website = cmd("aws s3api get-bucket-website --bucket %s" %(bucket))
-	if 'An error occurred (AccessDenied) when calling the GetBucketWebsite operation: Access Denied' in website:
+	if 'An error occurred (AccessDenied) when calling the GetBucketWebsite operation: Access Denied' in website or '(AllAccessDisabled)' in website:
 		print(Fore.RED+'\b\t[Website Disable]'+Style.RESET_ALL) if domainList else print(Fore.RED+'[X] Access Denied for fetching website config'+Style.RESET_ALL)
 	elif '(NoSuchBucket)' in website:
 		print(Fore.MAGENTA+'\b\t[NSB:Website Disable]'+Style.RESET_ALL) if domainList else print(Fore.MAGENTA+'[X] No Such Bucket for fetching website config'+Style.RESET_ALL)
@@ -120,7 +120,7 @@ def website(bucket, domainList=False):
 def location(bucket, domainList=False):
 	if domainList is False: print(Fore.YELLOW+"[!] Checking "+bucket+" bucket location: "+Style.RESET_ALL)
 	location = cmd("aws s3api get-bucket-location --bucket %s" %(bucket))
-	if 'An error occurred (AccessDenied) when calling the GetBucketLocation operation: Access Denied' in location:
+	if 'An error occurred (AccessDenied) when calling the GetBucketLocation operation: Access Denied' in location or '(AllAccessDisabled)' in location:
 		print(Fore.RED+'\b\t[Location Disable]'+Style.RESET_ALL) if domainList else print(Fore.RED+'[X] Access Denied for fetching bucket location'+Style.RESET_ALL)
 	elif '(NoSuchBucket)' in location:
 		print(Fore.MAGENTA+'\b\t[NSB:Location Disable]'+Style.RESET_ALL) if domainList else print(Fore.MAGENTA+'[X] No Such Bucket for fetching bucket location'+Style.RESET_ALL)
@@ -132,7 +132,7 @@ def location(bucket, domainList=False):
 def listbucket(bucket, domainList=False):
 	if domainList is False: print(Fore.YELLOW+"[!] Trying to list files in "+bucket+Style.RESET_ALL )
 	listbucket = cmd("aws s3 ls s3://%s" %(bucket))
-	if 'An error occurred (AccessDenied) when calling the ListObjectsV2 operation: Access Denied' in listbucket:
+	if 'An error occurred (AccessDenied) when calling the ListObjectsV2 operation: Access Denied' in listbucket or '(AllAccessDisabled)' in listbucket:
 		print(Fore.RED+'\b\t[List Disable]'+Style.RESET_ALL) if domainList else print(Fore.RED+'[X] Access Denied for List files'+Style.RESET_ALL)
 	elif '(NoSuchBucket)' in listbucket:
 		print(Fore.MAGENTA+'\b\t[NSB:List Disable]'+Style.RESET_ALL) if domainList else print(Fore.MAGENTA+'[X] No Such Bucket for List files'+Style.RESET_ALL)
