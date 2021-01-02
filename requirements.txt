@@ -6,3 +6,4 @@ os
 re
 colorama
 random
+awscli
