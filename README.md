@@ -3,6 +3,8 @@
 
 This tool is based in [S3Cruze](https://github.com/JR0ch17/S3Cruze) tool of [@JR0ch17](https://twitter.com/JR0ch17). Translated from python2 to python3, remove the feature of bruteforce. The other feature still remains and upgraded. You can check a single domain or a subdomain list from your recon results. This tool will get the CNAME first if it's a valid Amazon s3 bucket and if it's not, it will try to check if the domain is a bucket name. You can also try both in single domain option (but not available with subdomain list option).
 
+[![asciicast](https://asciinema.org/a/mfgqR7fNPok2ovY1h5x0cQdvz.svg)](https://asciinema.org/a/mfgqR7fNPok2ovY1h5x0cQdvz)
+
 ## Installation
 
 ```shell
