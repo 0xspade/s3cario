@@ -40,6 +40,11 @@ python3 s3cario.py -d test.example.com -t -u -r --all
 python3 s3cario.py -dL subdomain_list.txt -s -u -r --all
 ```
 
+**pipe it from another tools**
+```shell
+subfinder -d example.com -nW -silent | python3 s3cario.py --pipe -t -u -r --all
+```
+
 ## Help
 
 ```shell
@@ -51,10 +56,10 @@ $ python3 s3cario.py -h
 		███████╗ █████╔╝██║     ███████║██████╔╝██║██║   ██║
 		╚════██║ ╚═══██╗██║     ██╔══██║██╔══██╗██║██║   ██║
 		███████║██████╔╝╚██████╗██║  ██║██║  ██║██║╚██████╔╝
-		╚══════╝╚═════╝  ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝ ╚═════╝ v0.1
+		╚══════╝╚═════╝  ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝ ╚═════╝ v0.2
 		                                     		@0xspade
 	
-usage: s3cario.py [-h] [-d [DOMAIN]] [-dL [DOMAINLIST]] [-t] [-s] [-v] [-u] [-r] [-a] [-p] [-c] [-rP] [-w] [-l] [--all]
+usage: s3cario.py [-h] [-d [DOMAIN]] [-dL [DOMAINLIST]] [--pipe] [-t] [-s] [-v] [-u] [-r] [-a] [-p] [-c] [-rP] [-w] [-l] [--all]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -62,6 +67,7 @@ optional arguments:
                         Target Domain or Subdomain
   -dL [DOMAINLIST], --domainList [DOMAINLIST]
                         Target Domain/Subdomain list
+  --pipe                Read domains in pipe
   -t, --test            Test the domain also
   -s, --silent          No Errors
   -v, --view            List files bucket
@@ -79,6 +85,8 @@ optional arguments:
 ## Disclaimer
 
 This tool is for bug bounty or gray box penetration testing only. Be responsible with your action using my tool. I'm not responsible for the others action who misuse my tool.
+
+My code is look like a copy paste and a shitty "if and else" code. But as long as it's working, I guess it's a good to go tool :)
 
 Feel free to translate it to golang.
 
