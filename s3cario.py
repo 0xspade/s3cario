@@ -25,13 +25,14 @@ def separator():
 
 def upload(bucket, remove=False, domainList=False):
 	random_number = randrange(10000000, 99999999)
-	file = "poc-%s-%s.txt" %(random_number, bucket)
-	upload = open(file, 'w+')
+	file = "poc-"+random_number+"-"+bucket+".txt"
+	new_file = file
+	upload = open(new_file, 'w+')
 	upload.write("Proof Of Concept\nAWS Misconfig\n-/Spade Was Here-/") ## Replace Me :)
 	upload.close()
 
 	if domainList is False: print(Fore.YELLOW+"[!] Trying Upload: "+file+Style.RESET_ALL)
-	up = cmd("aws s3 cp %s s3://%s" % (file, bucket))
+	up = cmd("aws s3 cp %s s3://%s" % (new_file, bucket))
 	if 'An error occurred (AccessDenied) when calling the PutObject operation: Access Denied' in up or '(AllAccessDisabled)' in up:
 		print(Fore.RED+'\b\t[Upload Failed]'+Style.RESET_ALL) if domainList else print(Fore.RED+'[X] Access Denied for Uploading in bucket'+Style.RESET_ALL)
 		if remove and domainList: 
@@ -50,12 +51,12 @@ def upload(bucket, remove=False, domainList=False):
 		separator()	
 
 		if remove:
-			print(Fore.YELLOW+"[!] Trying Remove: "+file+Style.RESET_ALL)
-			rm = cmd("aws s3 rm s3://%s/%s" %(bucket, file))
+			print(Fore.YELLOW+"[!] Trying Remove: "+new_file+Style.RESET_ALL)
+			rm = cmd("aws s3 rm s3://%s/%s" %(bucket, new_file))
 			separator()
 			print('\b\t[Remove Success]') if domainList else print(rm+"\n")
 			separator()
-		os.remove(file)
+		os.remove(new_file)
 
 def acl(bucket, domainList=False):
 	if domainList is False: print(Fore.YELLOW+"[!] Checking "+bucket+" bucket ACL: "+Style.RESET_ALL)
@@ -189,10 +190,13 @@ def main():
 		elif args.domain:
 			if bucket(args.domain) == 'not_domain': 
 				print(Fore.RED+"[X] "+args.domain+" is not a Valid Domain!"+Style.RESET_ALL)
+				sys.exit(-1)
 			if bucket(args.domain) == 'blank_cname':
 				print(Fore.RED+"[X] "+args.domain+" has no CNAME!"+Style.RESET_ALL)
+				sys.exit(-1)
 			if bucket(args.domain) == 'not_aws':
 				print(Fore.RED+"[X] "+args.domain+" is not a valid bucket!"+Style.RESET_ALL)
+				sys.exit(-1)
 			domain = bucket(args.domain)
 			print("[+] "+domain+" is valid bucket!") if args.domain == domain else print("[+] "+args.domain+" is valid with a bucket name: "+domain+"!")
 
@@ -200,15 +204,15 @@ def main():
 
 			if args.view: 
 				listbucket(domain)
-				if args.test: listbucket(args.domain)
+				if args.test and domain != args.domain: listbucket(args.domain)
 
 			if args.upload and args.remove: 
 				upload(domain, args.remove)
-				if args.test: upload(args.domain, args.remove)
+				if args.test and domain != args.domain: upload(args.domain, args.remove)
 
 			elif args.upload: 
 				upload(domain)
-				if args.test: upload(args.domain)
+				if args.test and domain != args.domain: upload(args.domain)
 
 			elif args.remove: 
 				print(Fore.RED+"[X] Please include -u or --upload option!"+Style.RESET_ALL); sys.exit(-1)
@@ -221,32 +225,32 @@ def main():
 				replication(domain)
 				website(domain)
 				location(domain)
-				if args.test: listbucket(args.domain)
-				if args.test: acl(args.domain)
-				if args.test: policy(args.domain)
-				if args.test: cors(args.domain)
-				if args.test: replication(args.domain)
-				if args.test: website(args.domain)
-				if args.test: location(args.domain)				
+				if args.test and domain != args.domain: listbucket(args.domain)
+				if args.test and domain != args.domain: acl(args.domain)
+				if args.test and domain != args.domain: policy(args.domain)
+				if args.test and domain != args.domain: cors(args.domain)
+				if args.test and domain != args.domain: replication(args.domain)
+				if args.test and domain != args.domain: website(args.domain)
+				if args.test and domain != args.domain: location(args.domain)				
 			else:
 				if args.acl: 
 					acl(domain)
-					if args.test: acl(args.domain)
+					if args.test and domain != args.domain: acl(args.domain)
 				if args.policy: 
 					policy(domain)
-					if args.test: policy(args.domain)
+					if args.test and domain != args.domain: policy(args.domain)
 				if args.cors: 
 					cors(domain)
-					if args.test: cors(args.domain)
+					if args.test and domain != args.domain: cors(args.domain)
 				if args.replication: 
 					replication(domain)
-					if args.test: replication(args.domain)
+					if args.test and domain != args.domain: replication(args.domain)
 				if args.website: 
 					website(domain)
-					if args.test: website(args.domain)
+					if args.test and domain != args.domain: website(args.domain)
 				if args.location: 
 					location(domain)
-					if args.test: location(args.domain)
+					if args.test and domain != args.domain: location(args.domain)
 
 		elif args.domainList:
 			if os.path.isfile(args.domainList) == True:
