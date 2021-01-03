@@ -25,7 +25,7 @@ def separator():
 
 def upload(bucket, remove=False, domainList=False):
 	random_number = randrange(10000000, 99999999)
-	file = "poc-"+random_number+"-"+bucket+".txt"
+	file = "poc-"+str(random_number)+"-"+bucket+".txt"
 	new_file = file
 	upload = open(new_file, 'w+')
 	upload.write("Proof Of Concept\nAWS Misconfig\n-/Spade Was Here-/") ## Replace Me :)
