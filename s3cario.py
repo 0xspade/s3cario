@@ -2,9 +2,11 @@
 # -*- coding: utf-8 -*-
 import sys, subprocess, requests, argparse, os.path, os, re, colorama
 from random import randrange
+from requests.exceptions import ConnectionError
 from colorama import Fore, Back, Style
 colorama.init()
 
+requests.adapters.DEFAULT_RETRIES = 5
 cmd = subprocess.getoutput
 
 def banner():
@@ -15,7 +17,7 @@ def banner():
 		███████╗ █████╔╝██║     ███████║██████╔╝██║██║   ██║
 		╚════██║ ╚═══██╗██║     ██╔══██║██╔══██╗██║██║   ██║
 		███████║██████╔╝╚██████╗██║  ██║██║  ██║██║╚██████╔╝
-		╚══════╝╚═════╝  ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝ ╚═════╝ v0.1
+		╚══════╝╚═════╝  ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝ ╚═════╝ v0.2
 		                                     		@0xspade
 	"""
 	print(Fore.CYAN+banner+Style.RESET_ALL)
@@ -23,7 +25,7 @@ def banner():
 def separator():
 	print(Fore.WHITE+"*"*30+Style.RESET_ALL)
 
-def upload(bucket, remove=False, domainList=False):
+def upload(bucket, domainList=False, remove=False):
 	random_number = randrange(10000000, 99999999)
 	file = "poc-"+str(random_number)+"-"+bucket+".txt"
 	new_file = file
@@ -152,11 +154,15 @@ def bucket(domain):
 				new_cname = re.sub(r"\.$", "", new_cname)
 				return new_cname
 			else:
-				r = requests.get('http://'+domain+'.s3.amazonaws.com', verify=False, timeout=20)
-				if r.status_code != 404 and r.status_code != 503:
-					return domain
-				else:
-					return 'not_aws'
+				try:
+					r = requests.get('http://'+domain+'.s3.amazonaws.com', verify=False, timeout=20)
+					if r.status_code != 404 and r.status_code != 503:
+						return domain
+					else:
+						return 'not_aws'
+				except ConnectionError:
+					print(Fore.RED+"[X] Connection is not stable this time.\nTry again later!"+Style.RESET_ALL)
+					sys.exit(-1)
 		else:
 			return 'blank_cname'
 	else:
@@ -168,6 +174,7 @@ def main():
 	parser = argparse.ArgumentParser(description='')
 	parser.add_argument('-d', '--domain', nargs='?', action="store", help='Target Domain or Subdomain')
 	parser.add_argument('-dL', '--domainList', nargs='?', action="store", help="Target Domain/Subdomain list")
+	parser.add_argument('--pipe', default=False, action="store_true", help='Read domains in pipe')
 	parser.add_argument('-t', '--test', default=False, action="store_true", help="Test the domain also")
 	parser.add_argument('-s', '--silent', default=False, action="store_true", help="No Errors")
 	parser.add_argument('-v', '--view', default=False, action="store_true", help="List files bucket")
@@ -183,7 +190,7 @@ def main():
 	args = parser.parse_args()
 
 	try:
-		if args.domain and args.domainList:
+		if args.domain and args.domainList and args.pipe:
 			print(Fore.RED+"[X] This Option should not be together!"+Style.RESET_ALL)
 			sys.exit(-1)
 
@@ -280,7 +287,7 @@ def main():
 				if args.view: listbucket(d, args.domainList)
 
 				if args.upload and args.remove: 
-					upload(d, args.remove, args.domainList)
+					upload(d, args.domainList, args.remove)
 				elif args.upload: 
 					upload(d, args.domainList)
 				elif args.remove: 
@@ -301,6 +308,53 @@ def main():
 					if args.replication: replication(d, args.domainList)
 					if args.website: website(d, args.domainList)
 					if args.location: location(d, args.domainList)
+
+		elif args.pipe:
+
+			piper = sys.stdin.readlines()
+			count = len(piper)
+			print(Fore.BLACK+Back.WHITE+"Domain Count: "+str(count)+Style.RESET_ALL)
+			if args.test: print(Fore.YELLOW+"[!] Sorry, -t or --test option has no power here :)"+Style.RESET_ALL)
+			for i in piper:
+				domain = i.replace('\n', '')
+				if bucket(domain) == 'not_domain': 
+					if args.silent is False: print(Fore.RED+"[X] "+domain+" is not a Valid Domain!"+Style.RESET_ALL)
+					continue
+				elif bucket(domain) == 'blank_cname':
+					if args.silent is False: print(Fore.RED+"[X] "+domain+" has no CNAME!"+Style.RESET_ALL)
+					continue
+				elif bucket(domain) == 'not_aws':
+					if args.silent is False: print(Fore.RED+"[X] "+domain+" is not a valid bucket!"+Style.RESET_ALL)
+					continue
+				else:
+					d = bucket(domain)
+					print("[+] "+d) if domain == d else print("[+] "+domain+" :: "+d)
+
+				if args.view: listbucket(d, args.pipe)
+
+				if args.upload and args.remove: 
+					upload(d, args.pipe, args.remove)
+				elif args.upload: 
+					upload(d, args.pipe)
+				elif args.remove: 
+					print(Fore.RED+"[X] Please include -u or --upload option!"+Style.RESET_ALL)
+
+				if args.all:
+					listbucket(d, args.pipe)
+					acl(d, args.pipe)
+					policy(d, args.pipe)
+					cors(d, args.pipe)
+					replication(d, args.pipe)
+					website(d, args.pipe)
+					location(d, args.pipe)
+				else:
+					if args.acl: acl(d, args.pipe)
+					if args.policy: policy(d, args.pipe)
+					if args.cors: cors(d, args.pipe)
+					if args.replication: replication(d, args.pipe)
+					if args.website: website(d, args.pipe)
+					if args.location: location(d, args.pipe)
+
 		else:
 			print(Fore.RED+"[X] Wrong Argument, Go Home!, your drunk Asshole!"+Style.RESET_ALL)
 			sys.exit(-1)
