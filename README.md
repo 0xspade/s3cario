@@ -92,3 +92,7 @@ My code is look like a copy paste and a shitty "if and else" code. But as long a
 
 Feel free to translate it to golang.
 
+Free $100 in DigitalOcean, just click the link below :D
+
+[![DigitalOcean Referral Badge](https://web-platforms.sfo2.cdn.digitaloceanspaces.com/WWW/Badge%201.svg)](https://www.digitalocean.com/?refcode=9d633afb889b&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge)
+
